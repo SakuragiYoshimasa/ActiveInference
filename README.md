@@ -48,10 +48,10 @@ The generative model for partially observable parameterised Markov decision proc
 $P(\widetilde{o}, \widetilde{s}, \pi, \eta) = P(\pi)P(\eta)\prod_{t=1}^{T}P(o_t|s_t)P(s_t|s_{t-1},\pi)$  
 
 | Eq | Means |
-|----|-------|
-|$P(o_t|s_t)=Cat(A)$.| $A$ is a likelihood matrix mapping from hidden state to outcomes. |
-|$P(s_{t+1}|s_t, \pi > 0)=Cat(B(u=\pi(t)))$    | $B$ is a transition probability matrix for hidden states under each action prescribed by a policy at a particular time. |
-|$P(s_{t+1}|s_t, \pi = 0)=Cat(C)$   | $C$ is a transition probability matrix for hidden states under a habit.  |   
+|----|-------|    
+|$P(o_t\|s_t)=Cat(A)$.| $A$ is a likelihood matrix mapping from hidden state to outcomes. |     
+|$P(s_{t+1}\|s_t, \pi > 0)=Cat(B(u=\pi(t)))$    | $B$ is a transition probability matrix for hidden states under each action prescribed by a policy at a particular time. |   
+|$P(s_{t+1}\|s_t, \pi = 0)=Cat(C)$   | $C$ is a transition probability matrix for hidden states under a habit.  |   
 |$P(s_1, s_0)=Cat(D)$| $D$ is a prior expectation of each state at the beginning of each trial.|
 |$P(\pi)=\sigma(\hat{E}-\gamma \cdot G)$   |   |
 |$P(A) = Dir(a)$ same at $B,C,D,E$   |   |  
@@ -89,7 +89,7 @@ where,
 
 $\boldsymbol{o}_{\tau}^{\pi}=\breve{A}\cdot\boldsymbol{s}_\tau^\pi$
 
-$U_r=U(o_r)=lnP(o_r)$
+$\boldsymbol{U}_r=U(o_r)=lnP(o_r)$
 
 $H=-diag(\breve{A}\cdot\widehat{A})$
 
@@ -148,50 +148,16 @@ $\boldsymbol{d}=d+\boldsymbol{s}_1$
 
 $\boldsymbol{e}=e+\boldsymbol{\pi}$
 
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
 
 
 
+# Flow
+the (simulated) behavioural and physiological responses over 32 successive trials using a format that will be adopted in subsequent figures.
+Each trial comprises two actions following an initial observation.
+The top panel shows the initial states on each trial (as coloured circles) and subsequent policy selection (in image format) over the 11 policies considered.
+The first 10 (allowable) policies correspond to staying at the center and then moving to each of the four locations, moving to the left or right arm and staying there, or moving to the lower arm and then moving to each of the four locations.
+The 11th policy corresponds to a habit (i.e., state-action policy).
 
-
-
-
-
-
-
-#
+- sensory evidence is accumulated to from beliefs about the current state of the world.This evidence accumulation corresponds to state estimation under each policy.
+- The quality of each policy is then evaluated in terms of its expected free energy.
+-

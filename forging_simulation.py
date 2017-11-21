@@ -8,59 +8,145 @@ Finally, prior beliefs about policies were initialised to e = 4 with the excepti
 These concentration parameters can be regarded as the num- ber of times each state, transition or policy has been encountered in previous trials
 '''
 
-'''
-Infernece: Optimising expectations about hidden states.
-Learning : Optimising model parameters.
-'''
+import numpy as np
+import matplotlib.pyplot as plt
+
+policy_count = 11
+state_count = 8
+action_count = 2
+trial_count = 32
+
+def softmax(x):
+    """
+    Compute softmax values for each sets of scores in x.
+
+    Rows are scores for each class.
+    Columns are predictions (samples).
+    """
+    scoreMatExp = np.exp(np.asarray(x))
+    return scoreMatExp / scoreMatExp.sum(0)
+
+
+def simulate():
+
+
+    #the behavioural and physiological responses over 32 successive trials using a format that will be adopted in subsequent figures.
+    for trial_index in range(trial_count):
+
+        # Each trial comprises two actions following an initial observation.
+        initial_obserbation = [1, 0, 0, 0, 0, 0, 0] # initial position
+        observations = [initial_obserbation]
+
+        s_tau_of_each_policy_prev = [[0 for _ in range(state_count)] for i in range(policy_count)]
+
+        for tau in range(action_count):
+            max_iter = 1500
+
+            for i in range(max_iter):
+                '''
+                Inference
+                '''
+                # state_estimation of each policy
+                s_tau_of_each_policy = state_estimation(exp_ln_A, exp_ln_B, observations[-1], s_tau_of_each_policy_prev)
+                # policy selecton
+                exp_policy = 0
+                # calc precision
+                exp_beta = 0
+
+                '''
+                Learning
+                '''
+
+            # make action from policy
+
+            # get observation
+
+
+            s_tau_of_each_policy_prev = s_tau_of_each_policy
+        break
+
+    return
+
 
 '''
-Notation
-sequences of variables over time => v_seq
-expectations of parameters => p_exp
-logarithm => v_log
+Inference
 '''
+def state_estimation(exp_ln_A, exp_ln_B, current_observation, s_tau_of_each_policy_prev):
 
-'''
-Output set O
-o_tau ∈ {0, 1}
-o_tau_exp ∈ [0, 1]
+    #calc future expectations
+    s_tau_future_of_each_policy = []
+    s_tau_of_each_policy = []
 
-Hidden state set S
-s_tau ∈ {0, 1}
-s_tau_exp ∈ [0, 1]
+    for pi in range(policy_count):
 
-Policy set T
-pi = (pi_1, .. pi_K) ∈ {0, 1}
-pi_exp = (pi_exp_1, .. pi_exp_K) ∈ [0, 1]
+        s_tau_of_pi = softmax(np.dot(exp_ln_A.T, current_observation) + np.dot(exp_ln_B.T, s_tau_of_each_policy_prev[pi]) + np.dot(exp_ln_B.T, s_tau_future_of_each_policy[pi]))
+        s_tau_of_each_policy.append(s_tau_of_pi)
 
-Action
-u = pi(t) ∈ {1,2,...}
+    return s_tau_future_of_each_policy
 
-gamma ∈ R                           :Precision of beliefs about policies
+def policy_selection():
+    return
 
-A ∈ [0, 1]                          :Likelifood matrix mapping from hidden states to outcomes
-B_tau^pi = B(u=pi(tau)) ∈ [0, 1]    :transition probability for hidden states under each action prescribed by a policy at a paticular time.
-C := B_tau^0_log ∈ [0, 1]           :transition probability for hidden state under a habit
-D ∈ [0, 1]                          :Prior expectation of each state at the begginig of each trial
-E ∈ [0, 1]                          :Prior expectation of eacg policy at the begginig of each trial
-
-U_tau = ln P(o_tau) ∈ R             :logarithm of prior preferences or utility over outcomes
-
-F:F_tau = F(pi) = Sum_tau F(pi, tau) ∈ R : Variatinal free energy for each policy
-G:G_tau = G(pi) = Sum_tau g(pi, tau) ∈ R : Expected free energy for each policy
-
-H = -diag()
-'''
+def precision():
+    return
 
 '''
-Model parameters of generative model
-η = {a,b,c,d,e,β}
-a := P(A) = Dir(a)
-b := P(B) = Dir(b)
-c := P(C) = Dir(c)
-d := P(D) = Dir(d)
-e := P(E) = Dir(e)
-β := P(γ) = Γ(1, β)
+Learning
+'''
+
+def update_Aa():
+    return
+
+
+def update_Bb():
+    return
+
+
+def update_Cc():
+    return
+
+
+def update_Dd():
+    return
+
+def update_Ee():
+    return
 
 
 '''
+Setting and initial parameters
+'''
+def generate_setting():
+    U = [1,2,3,4] # control state implying location
+    '''
+    the 11 policies considered.
+    The first 10 policies correspond to staying at the center and then moving to each of the four locations,
+    moving to the left or right arm and staying there, or moving to the lower arm and then moving to each of the four locations.
+    The 11th policy corresponds to a habit (i.e., state-action policy).
+    '''
+    T = [(1,1),(1,2),(1,3),(1,4),(2,2),(3,3),(4,1),(4,2),(4,3),(4,4),('habit')] # habit or select location
+    U_bf = np.array([0, 3, -3, 3, -3, 0, 0], dtype='float128').T #U_tau
+    S = [(1,2),(1,3),(2,2),(2,3),(3,2),(3,3),(4,2),(4,3)] #hidden states (location, context)
+    O = [i for i in range(7)] # outcomes if outcome is 5 or 6, it means get the context information
+    return [U,T,U_bf,S,O]
+
+def generate_initial_params():
+
+    p = 0.98
+    q = 1 - p
+
+    A = np.array([
+        [1,1,0,0,0,0,0,0],
+        [0,0,p,q,0,0,0,0],
+        [0,0,q,p,0,0,0,0],
+        [0,0,0,0,q,p,0,0],
+        [0,0,0,0,0,0,1,0],
+        [0,0,0,0,0,0,0,1]], dtype='float128')
+    B = np.array()
+    C = sum(B)
+    d = np.array([8,8,0,0,0,0,0,0])
+    e = np.array([0,4,4,4,4])
+    return [A,B,C,d,e]
+
+if __name__ == '__main__':
+    simulate()
