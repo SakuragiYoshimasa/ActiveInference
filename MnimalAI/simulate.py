@@ -10,6 +10,7 @@ psi_0 = n / 2.0
 k = np.power(4.0, - 1.0 / 16)
 omega = np.log(4.0) / 16.0
 roh = 0.75
+lower_optimise = 0.001
 
 '''
 b := brain state. size n.
@@ -126,8 +127,16 @@ def random_from_P_psinext(psi, a):
 
 def optimise(b, s, a):
     b_next = np.zeros(n, dtype='float')
+    prev_ = 0
     for i in range(100):
+        print('optimise %d, %d' % (i, len(b_next)))
+        #print(b_next)
+
         b_next = b_next - eta * grad_F_on_b_next(b_next, b, s, a)
+        if abs(np.linalg.norm(b_next) - prev_) < lower_optimise:
+            break
+        else:
+            prev_ = np.linalg.norm(b_next)
     return b_next
 
 def simulate(psi, b, b_star):
@@ -136,10 +145,15 @@ def simulate(psi, b, b_star):
 
     for i in range(100):
         s = random_from_P_s(psi)
+        print(s)
         a = argmin_F(b_star, b, s)
+        print(a)
         b_next = optimise(b, s, a)
+        print(b_next)
         psi_next = random_from_P_psinext(psi, a)
+        print(psi_next)
         b, psi = [b_next, psi_next]
+        print(b)
         print(psi)
     return
 
